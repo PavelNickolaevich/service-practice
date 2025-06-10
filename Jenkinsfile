@@ -7,8 +7,8 @@ pipeline {
     }
 
     environment {
-            CUSTOM_REPO_URL = "${env.GIT_REPO_URL}"
-            CUSTOM_BRANCH = "${env.GIT_BRANCH}"
+            CUSTOM_REPO_URL = "${params.GIT_REPO_URL}"
+            CUSTOM_BRANCH = "${params.GIT_BRANCH}"
         }
 
     stages {
