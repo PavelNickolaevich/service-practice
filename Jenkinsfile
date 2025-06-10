@@ -6,10 +6,10 @@ pipeline {
         jdk 'jdk-17'
     }
 
-    environment {
-        REPO_URL = "${env.GIT_REPO_URL}"
-        BRANCH = "${env.GIT_BRANCH}"
-    }
+ parameters {
+         string(name: 'GIT_REPO_URL', defaultValue: 'https://github.com/PavelNickolaevich/service-practice.git', description: 'Git Repository URL')
+         string(name: 'GIT_BRANCH', defaultValue: 'main', description: 'Git Branch')
+     }
 
     stages {
         stage('Cleaning workspace') {
