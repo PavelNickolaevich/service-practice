@@ -7,11 +7,18 @@ pipeline {
     }
 
  parameters {
-         string(name: 'GIT_REPO_URL', defaultValue: 'https://github.com/PavelNickolaevich/service-practice.git', description: 'Git Repository URL')
-         string(name: 'GIT_BRANCH', defaultValue: 'main', description: 'Git Branch')
+         string(name: 'GIT_REPO_URL', description: 'Git Repository URL')
+         string(name: 'GIT_BRANCH', description: 'Git Branch')
      }
 
     stages {
+
+    stage('Debug') {
+        steps {
+            echo "Repository URL: ${params.GIT_REPO_URL}"
+            echo "Branch: ${params.GIT_BRANCH}"
+        }
+    }
         stage('Cleaning workspace') {
             steps {
                 cleanWs()
@@ -25,14 +32,14 @@ pipeline {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: env.GIT_BRANCH]],
+                    branches: [[name: params.GIT_BRANCH]],
                     doGenerateSubmoduleConfigurations: false,
                     extensions: [],
                     submoduleCfg: [],
                     userRemoteConfigs: [[
                         credentialsId: 'your-git-credentials-id',
 //                         url: 'https://github.com/PavelNickolaevich/service-practice.git'
-                        url: env.GIT_REPO_URL
+                        url: params.GIT_REPO_URL
                     ]]
                 ])
             }

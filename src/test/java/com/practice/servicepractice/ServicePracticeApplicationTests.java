@@ -33,10 +33,14 @@ class ServicePracticeApplicationTests {
                 .contentType("application/json")
                 .body(payload)
                 .when()
-                .post("/v1/api/saveCountry")
-                .then().statusCode(202);
+                .log().all()
+                .basePath("/v1/api/saveCountry")
+                .post()
+                .then()
+                .statusCode(202)
+                .log().all();
 
-        Response response = RestAssured.get(BASE_URI +"/v1/api/allCountries");
+        Response response = RestAssured.get(BASE_URI + "/v1/api/allCountries");
 
         org.assertj.core.api.Assertions.assertThat(response.body().asString()).contains(countryName);
     }
