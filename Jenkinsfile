@@ -25,14 +25,14 @@ pipeline {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: env.BRANCH]],
+                    branches: [[name: env.GIT_BRANCH]],
                     doGenerateSubmoduleConfigurations: false,
                     extensions: [],
                     submoduleCfg: [],
                     userRemoteConfigs: [[
                         credentialsId: 'your-git-credentials-id',
 //                         url: 'https://github.com/PavelNickolaevich/service-practice.git'
-                        url: env.REPO_URL
+                        url: env.GIT_REPO_URL
                     ]]
                 ])
             }
