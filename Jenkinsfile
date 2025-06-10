@@ -32,13 +32,13 @@ pipeline {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: env.CUSTOM_BRANCH]],
+                    branches: [[name: "${env.CUSTOM_REPO_URL}"]],
                     doGenerateSubmoduleConfigurations: false,
                     extensions: [],
                     submoduleCfg: [],
                     userRemoteConfigs: [[
                         credentialsId: 'your-git-credentials-id',
-                        url: env.CUSTOM_BRANCH
+                        url: ${env.CUSTOM_BRANCH}
                     ]]
                 ])
             }
