@@ -32,7 +32,7 @@ pipeline {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: "${env.CUSTOM_REPO_URL}"]],
+                    branches: [[name: "refs/heads/${env.CUSTOM_BRANCH}"]],
                     doGenerateSubmoduleConfigurations: false,
                     extensions: [],
                     submoduleCfg: [],
