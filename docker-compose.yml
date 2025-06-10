@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   db:
     image: bitnami/postgresql:15
@@ -10,6 +12,13 @@ services:
     volumes:
       - ./db/:/docker-entrypoint-initdb.d/
       - data-db:/bitnami/postgresql
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U my_service -d cinema_service" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   zookeeper:
     image: bitnami/zookeeper:3.8
@@ -19,6 +28,8 @@ services:
       - ALLOW_ANONYMOUS_LOGIN=yes
     volumes:
       - zookeeper_data:/bitnami
+    networks:
+      - app-network
 
   kafka:
     image: bitnami/kafka:3.4
@@ -35,6 +46,8 @@ services:
       - zookeeper
     volumes:
       - kafka_data:/bitnami
+    networks:
+      - app-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -46,6 +59,8 @@ services:
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
     depends_on:
       - kafka
+    networks:
+      - app-network
 
   swagger:
     image: swaggerapi/swagger-ui:latest
@@ -54,17 +69,55 @@ services:
       - "8083:8080"
     environment:
       - URL=http://service-practice:8080/v3/api-docs.yaml
+    networks:
+      - app-network
 
   jenkins:
-    image: jenkins/jenkins:latest
+    image: jenkins/jenkins:lts-jdk17
+    user: root
     ports:
       - "8082:8080"
       - "50000:50000"
     volumes:
       - jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/bin/docker:/usr/bin/docker
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - DOCKER_HOST=unix:///var/run/docker.sock
     restart: unless-stopped
+    networks:
+      - app-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    depends_on:
+      - service-practice
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - app-network
 
   service-practice:
     image: service:1
@@ -73,10 +126,26 @@ services:
     volumes:
       - ./configuration:/app/config
     depends_on:
-      - kafka
+      db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   kafka_data:
   zookeeper_data:
-  data-db: {}
+  data-db:
   jenkins_data:
+  grafana_data:
+
+networks:
+  app-network:
+    driver: bridge
+    attachable: true

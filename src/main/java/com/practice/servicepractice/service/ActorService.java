@@ -47,8 +47,6 @@ public class ActorService {
         Objects.requireNonNull(actorDto, "Actor DTO cannot be null");
         LOG.info("Adding new actor: {}", actorDto);
 
-        validateActor(actorDto);
-
         CountryEntity country = null;
         if (actorDto.countryId() != null) {
             country = countryRepository.findById(Math.toIntExact(actorDto.countryId()))
@@ -68,17 +66,5 @@ public class ActorService {
         LOG.info("Successfully added actor with ID: {}", savedActor.getActorId());
 
         return ActorDto.fromEntity(savedActor);
-    }
-
-    private void validateActor(ActorDto actorDto) {
-        if (actorDto.firstName() == null || actorDto.firstName().isBlank()) {
-            throw new IllegalArgumentException("First name is required");
-        }
-        if (actorDto.lastName() == null || actorDto.lastName().isBlank()) {
-            throw new IllegalArgumentException("Last name is required");
-        }
-        if (actorDto.birthOfDate() != null && actorDto.birthOfDate().after(new Date())) {
-            throw new IllegalArgumentException("Birth date cannot be in the future");
-        }
     }
 }

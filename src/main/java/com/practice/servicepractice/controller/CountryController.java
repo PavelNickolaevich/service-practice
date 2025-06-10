@@ -1,6 +1,7 @@
 package com.practice.servicepractice.controller;
 
 import com.practice.servicepractice.data.dto.CountryDto;
+import com.practice.servicepractice.data.models.ApiResponseService;
 import com.practice.servicepractice.service.CountryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
@@ -19,14 +20,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 
 import static com.practice.servicepractice.topics.Topics.COUNTRY_TOPIC;
 
 @RestController
-//@RequestMapping("/v1/countries")
 @Tag(name = "Country API", description = "Управление странами")
 public class CountryController {
 
@@ -40,7 +38,7 @@ public class CountryController {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @GetMapping("/allCountries")
+    @GetMapping("/v1/api/allCountries")
     @Operation(
             summary = "Получить список всех стран",
             description = "Возвращает полный список всех стран, зарегистрированных в системе",
@@ -77,32 +75,33 @@ public class CountryController {
             )
     })
     @ApiResponse(responseCode = "200", description = "Список всех стран")
-    public List<CountryDto> getAllCountries() {
+    public List<CountryDto> getAllCountries()  {
         return countryService.getAllCountries();
     }
 
-    @PostMapping("/saveCountry")
+    @PostMapping("/v1/api/saveCountry")
     @Operation(summary = "Создать новую страну")
-    @ApiResponse(responseCode = "202", description = "Запрос принят в обработку")
-    public ResponseEntity<Map<String, String>> saveCountry(@RequestBody CountryDto country) {
-
+    @ApiResponses({
+            @ApiResponse(responseCode = "202", description = "Запрос принят в обработку"),
+            @ApiResponse(responseCode = "409", description = "Страна уже существует")
+    })
+    public ResponseEntity<ApiResponseService<String>> saveCountry(@RequestBody CountryDto country) {
         if (countryService.countryExistsByName(country.name())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of(
-                            "status", "error",
-                            "message", "Страна с названием '" + country.name() + "' уже существует",
-                            "timestamp", Instant.now().toString()
+                    .body(new ApiResponseService<>(
+                            "error",
+                            "Страна с названием '" + country.name() + "' уже существует",
+                            null
                     ));
-        } else {
-
-            kafkaTemplate.send(COUNTRY_TOPIC, "create", country);
-
-            return ResponseEntity.accepted().body(Map.of(
-                    "status", "accepted",
-                    "message", "Запрос на сохранение страны принят",
-                    "countryName", country.name(),
-                    "timestamp", Instant.now().toString()
-            ));
         }
+
+        kafkaTemplate.send(COUNTRY_TOPIC, "create", country);
+
+        return ResponseEntity.accepted()
+                .body(new ApiResponseService<>(
+                        "accepted",
+                        "Запрос на сохранение страны принят",
+                        country.name()
+                ));
     }
 }

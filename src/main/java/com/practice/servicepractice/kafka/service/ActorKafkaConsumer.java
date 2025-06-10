@@ -27,7 +27,7 @@ public class ActorKafkaConsumer {
             actorService.addActor(actorDto);
             LOG.info("Aктер сохранен через Kafka: {}", actorDto.firstName() + " " + actorDto.lastName());
         } catch (Exception e) {
-            LOG.error("Ошибка при обработке страны из Kafka: {}", e.getMessage());
+            LOG.error("Ошибка при обработке актера из Kafka: {}", e.getMessage());
         }
     }
 }

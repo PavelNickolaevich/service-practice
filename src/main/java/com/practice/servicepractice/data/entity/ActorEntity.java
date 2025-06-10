@@ -37,12 +37,23 @@ public class ActorEntity {
     @OneToMany(mappedBy = "actorId", cascade = CascadeType.ALL)
     private Set<MoviesActorsEntity> moviesActors;
 
+    public ActorEntity() {}
+
     public ActorEntity(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
     public ActorEntity(String firstName, String lastName, String patronymic, Date birthOfDate, CountryEntity country) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.patronymic = patronymic;
+        this.birthOfDate = birthOfDate;
+        this.country = country;
+    }
+
+    public ActorEntity(Long actorId, String firstName, String lastName, String patronymic, Date birthOfDate, CountryEntity country) {
+        this.actorId = actorId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;

@@ -8,6 +8,7 @@ spring:
       ddl-auto: update
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
   kafka:
     bootstrap-servers: kafka:9092
     producer:
@@ -17,11 +18,35 @@ spring:
       group-id: movie-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
-  springdocs:
-    swagger-ui:
-      path: /swagger-ui.html
-      tags-sorter: alpha
-      operations-sorter: alpha
+#      properties:
+#        spring.json.trusted.packages: "*"
 
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+#          - health
+#          - info
+#          - prometheus
+#          - metrics
+  metrics:
+    enable:
+      prometheus: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+#      percentile-histograms:
+#        "http.server.requests": true
+    tags:
+      application: cinema-service
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha

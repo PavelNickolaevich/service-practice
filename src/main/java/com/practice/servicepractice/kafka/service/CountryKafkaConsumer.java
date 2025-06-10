@@ -25,7 +25,7 @@ public class CountryKafkaConsumer {
             countryService.addCountry(countryDto);
             LOG.info("Страна сохранена через Kafka: {}", countryDto.name());
         } catch (Exception e) {
-            LOG.error("Ошибка при обработке страны из Kafka: {}", e.getMessage());
+            LOG.error("Ошибка при обработке страны из Kafka :( : {}", e.getMessage());
         }
     }
 }

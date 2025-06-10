@@ -3,6 +3,7 @@ package com.practice.servicepractice.service;
 import com.practice.servicepractice.data.dto.CountryDto;
 import com.practice.servicepractice.data.entity.CountryEntity;
 import com.practice.servicepractice.data.repository.CountryRepository;
+import io.micrometer.core.annotation.Timed;
 import jakarta.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ import java.util.List;
 @Component
 public class CountryService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ActorService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CountryService.class);
     private final CountryRepository countryRepository;
 
     @Autowired
@@ -25,6 +26,7 @@ public class CountryService {
         this.countryRepository = countryRepository;
     }
 
+    @Timed("get-all-countries")
     @Transactional(readOnly = true)
     public @Nonnull
     List<CountryDto> getAllCountries() {
@@ -34,6 +36,7 @@ public class CountryService {
                 .toList();
     }
 
+    @Timed("add-country")
     public @Nonnull
     CountryDto addCountry(@Nonnull CountryDto country) {
             LOG.info("Add new country {}", country);
