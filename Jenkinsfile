@@ -6,17 +6,17 @@ pipeline {
         jdk 'jdk-17'
     }
 
- parameters {
-         string(name: 'GIT_REPO_URL', description: 'Git Repository URL')
-         string(name: 'GIT_BRANCH', description: 'Git Branch')
-     }
+    environment {
+            CUSTOM_REPO_URL = "${env.GIT_REPO_URL}"
+            CUSTOM_BRANCH = "${env.GIT_BRANCH}"
+        }
 
     stages {
 
     stage('Debug') {
         steps {
-            echo "Repository URL: ${params.GIT_REPO_URL}"
-            echo "Branch: ${params.GIT_BRANCH}"
+            echo "Repository URL: ${env.CUSTOM_REPO_URL}"
+            echo "Branch: ${env.CUSTOM_BRANCH}"
         }
     }
         stage('Cleaning workspace') {
@@ -32,14 +32,13 @@ pipeline {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: params.GIT_BRANCH]],
+                    branches: [[name: env.CUSTOM_BRANCH]],
                     doGenerateSubmoduleConfigurations: false,
                     extensions: [],
                     submoduleCfg: [],
                     userRemoteConfigs: [[
                         credentialsId: 'your-git-credentials-id',
-//                         url: 'https://github.com/PavelNickolaevich/service-practice.git'
-                        url: params.GIT_REPO_URL
+                        url: env.CUSTOM_BRANCH
                     ]]
                 ])
             }
