@@ -38,7 +38,7 @@ pipeline {
                     submoduleCfg: [],
                     userRemoteConfigs: [[
                         credentialsId: 'your-git-credentials-id',
-                        url: "${env.CUSTOM_BRANCH}"
+                        url: "${env.CUSTOM_REPO_URL}"
                     ]]
                 ])
             }
