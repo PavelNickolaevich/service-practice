@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   db:
@@ -68,7 +67,9 @@ services:
     ports:
       - "8083:8080"
     environment:
-      - URL=http://service-practice:8080/v3/api-docs.yaml
+      - URL=http://localhost:8080/v3/api-docs.yaml
+    volumes:
+      - ./api-docs.yaml:/usr/share/nginx/html/v3/api-docs.yaml
     networks:
       - app-network
 
@@ -83,8 +84,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
     environment:
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - JENKINS_OPTS=--argumentsRealm.passwd.admin=admin --argumentsRealm.roles.admin=admin
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true
       - DOCKER_HOST=unix:///var/run/docker.sock
+      - JENKINS_ADMIN_ID=admin
+      - JENKINS_ADMIN_PASSWORD=admin
+      - JENKINS_ADMIN_EMAIL=admin@example.com
     restart: unless-stopped
     networks:
       - app-network

@@ -1,0 +1,140 @@
+openapi: 3.0.1
+info:
+  title: Cinema Service API
+  description: API для управления кинотеатром
+  version: 1.0.0
+servers:
+  - url: http://service-practice:8080
+    description: Основной сервер
+
+tags:
+  - name: Country API
+    description: Управление странами
+  - name: Actor API
+    description: Управление актерами
+
+paths:
+  /v1/api/allCountries:
+    get:
+      tags:
+        - Country API
+      summary: Получить список всех стран
+      description: Возвращает полный список всех стран, зарегистрированных в системе
+      responses:
+        '200':
+          description: Успешное получение списка стран
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CountryDto'
+          headers:
+            X-Total-Count:
+              schema:
+                type: integer
+              description: Общее количество стран
+        '401':
+          description: Требуется аутентификация
+        '403':
+          description: Доступ запрещен
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /v1/api/saveCountry:
+    post:
+      tags:
+        - Country API
+      summary: Создать новую страну
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CountryDto'
+      responses:
+        '202':
+          description: Запрос принят в обработку
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseString'
+        '409':
+          description: Страна уже существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseString'
+
+  /v1/api/getAllActors:
+    get:
+      tags:
+        - Actor API
+      summary: Получить всех актеров
+      responses:
+        '200':
+          description: Список всех актеров
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActorDto'
+
+  /v1/api/addActor:
+    post:
+      tags:
+        - Actor API
+      summary: Добавить нового актера
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActorDto'
+      responses:
+        '202':
+          description: Запрос на добавление актера принят
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseString'
+        '400':
+          description: Некорректные данные актера
+
+components:
+  schemas:
+    CountryDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Россия"
+      required:
+        - name
+
+    ActorDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: "Иван"
+        lastName:
+          type: string
+          example: "Иванов"
+      required:
+        - firstName
+        - lastName
+
+    ApiResponseString:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "accepted"
+        message:
+          type: string
+          example: "Запрос на сохранение страны принят"
+        data:
+          type: string
+          example: "Россия"

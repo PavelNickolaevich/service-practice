@@ -46,7 +46,8 @@ management:
       show-details: always
 
 springdoc:
+  api-docs:
+    path: /v3/api-docs.yaml
   swagger-ui:
     path: /swagger-ui.html
-    tags-sorter: alpha
-    operations-sorter: alpha
+    enabled: true

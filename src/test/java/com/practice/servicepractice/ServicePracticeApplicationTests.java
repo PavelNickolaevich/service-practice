@@ -24,7 +24,7 @@ class ServicePracticeApplicationTests {
     void checkResponseContainsCountryName() {
         Faker faker = new Faker(new Locale("ru"), new Random());
 
-        String countryName = faker.country().name();
+        String countryName = faker.country().name() + " - " + faker.country().countryCode2();
         String payload = String.format("{\"name\":\"%s\"}", countryName);
 
         RestAssured
