@@ -19,6 +19,8 @@ pipeline {
         steps {
             echo "Repository URL: ${env.CUSTOM_REPO_URL}"
             echo "Branch: ${env.CUSTOM_BRANCH}"
+            echo "Host: ${env.SERVER_HOST}"
+            echo "Port: ${env.SERVER_PORT}"
         }
     }
         stage('Cleaning workspace') {
