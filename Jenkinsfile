@@ -50,7 +50,7 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                sh 'mvn -X clean test -Dserver.port=${SERVER_PORT} -Dserver_host=$SERVER_HOST'
+                sh 'mvn -X clean test -Dserver.port=${SERVER_PORT} -Dserver.host=$SERVER_HOST'
             }
 
             post {
