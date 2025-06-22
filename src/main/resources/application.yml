@@ -1,6 +1,10 @@
+app:
+  api:
+    base-uri: http://localhost:8080
+---
 spring:
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/cinema_service
+    url: jdbc:postgresql://localhost:5432/cinema_service
     username: my_service
     password: my_pass
   jpa:
@@ -19,7 +23,6 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "*"
-
 
 management:
   endpoints:

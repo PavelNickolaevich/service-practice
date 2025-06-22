@@ -2,21 +2,38 @@ package com.practice.servicepractice;
 
 import com.github.javafaker.Faker;
 
+import com.practice.servicepractice.config.ApiProperties;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Locale;
 import java.util.Random;
 
-
+@SpringBootTest
+@ActiveProfiles("test")
 class ServicePracticeApplicationTests {
 
-    private static final String BASE_URI = "http://localhost:8080";
+    @Value("${app.api.base-uri}") // Инжектит значение из конфига
+    private String apiBaseUri;
+
+    @Autowired
+    private ApiProperties apiProperties;
+
+    private static final String BASE_URI = "http://service-practice:8080";
+
 
     @Test
     void simpleTest() {
+        System.out.println("Hello world!");
+        System.out.println(apiBaseUri);
         Assertions.assertEquals(4, 2 + 2);
     }
 
@@ -44,6 +61,5 @@ class ServicePracticeApplicationTests {
 
         org.assertj.core.api.Assertions.assertThat(response.body().asString()).contains(countryName);
     }
-
 
 }
