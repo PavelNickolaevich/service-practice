@@ -17,8 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Locale;
 import java.util.Random;
 
-@SpringBootTest
-@ActiveProfiles("test")
 class ServicePracticeApplicationTests {
 
     @Value("${app.api.base-uri}") // Инжектит значение из конфига
