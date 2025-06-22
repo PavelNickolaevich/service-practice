@@ -9,6 +9,8 @@ pipeline {
     environment {
             CUSTOM_REPO_URL = "${params.GIT_REPO_URL}"
             CUSTOM_BRANCH = "${params.GIT_BRANCH}"
+            SERVER_HOST="${params.SERVER_HOST}"
+            SERVER_PORT="${params.SERVER_PORT}"
         }
 
     stages {
@@ -46,7 +48,7 @@ pipeline {
 
         stage('Build and Test') {
             steps {
-                sh 'mvn -X clean test'
+                sh 'mvn -X clean test -Dserver.port=${SERVER_PORT} -Dserver_host=$SERVER_HOST'
             }
 
             post {
